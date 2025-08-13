@@ -82,13 +82,14 @@
     makeComputer("#f8a8ff", "AI-3", false, 4),
   ];
 
-  // Obstacles & boosts
-  const features = []; // each: {type:"boost"|"slow", x, lane}
-  function addFeature(type, x, lane) { features.push({ type, x, lane }); }
+  // Color pickups
+  const features = []; // each: {color, x, lane}
+  function addFeature(color, x, lane) { features.push({ color, x, lane }); }
   // sprinkle some
+  const pickupColors = racers.map(r => r.color);
   for (let i=6; i<FINISH; i+=300) {
-    if (Math.random() < 0.6) addFeature("boost", i + (Math.random()*120-60), Math.floor(Math.random()*lanes));
-    if (Math.random() < 0.45) addFeature("slow",  i + 120 + (Math.random()*120-60), Math.floor(Math.random()*lanes));
+    const color = pickupColors[Math.floor(Math.random()*pickupColors.length)];
+    addFeature(color, i + (Math.random()*120-60), Math.floor(Math.random()*lanes));
   }
 
   // Drawing helpers
@@ -119,15 +120,8 @@
     const x = f.x - cameraX;
     const y = laneY(f.lane);
     if (x < -100 || x > W+100) return;
-    if (f.type === "boost") {
-      ctx.fillStyle = "#b3ecff";
-      ctx.fillRect(x-12, y-10, 24, 20);
-    } else {
-      ctx.fillStyle = "#ffb3b3";
-      ctx.beginPath();
-      ctx.arc(x, y, 12, 0, Math.PI*2);
-      ctx.fill();
-    }
+    ctx.fillStyle = f.color;
+    ctx.fillRect(x-12, y-10, 24, 20);
   }
 
   function drawComputer(r) {
@@ -155,11 +149,11 @@
     for (const f of features) {
       if (f.lane !== r.lane) continue;
       if (Math.abs(r.x - f.x) < 30) {
-        if (f.type === "boost") {
+        if (f.color === r.color) {
+          r.speed = Math.max(80, r.speed - 120);
+        } else {
           r.speed += 80;
           if (r.isPlayer) r.battery = Math.min(100, r.battery + 10);
-        } else {
-          r.speed = Math.max(80, r.speed - 120);
         }
       }
     }
@@ -183,17 +177,17 @@
 
   function updateAI(r, dt) {
     r.ai.laneChangeCooldown -= dt;
-    // random desire to change lanes near features
+    // random desire to change lanes near pickups
     const ahead = features.find(f => f.lane === r.lane && f.x > r.x && f.x - r.x < 140);
     if (r.ai.laneChangeCooldown <= 0 && ahead && Math.random() < 0.5) {
-      // try move away from slow, toward boost
+      // try move away from matching color, toward different color
       let bestLane = r.lane;
       for (let dl of [-1,1]) {
         const L = r.lane + dl;
         if (L < 0 || L >= lanes) continue;
         const near = features.find(f => f.lane === L && Math.abs(f.x - r.x) < 160);
-        if (ahead.type === "slow" && (!near || near.type === "boost")) bestLane = L;
-        if (ahead.type === "boost" && near && near.type === "boost") bestLane = L;
+        if (ahead.color === r.color && (!near || near.color !== r.color)) bestLane = L;
+        if (ahead.color !== r.color && near && near.color !== r.color) bestLane = L;
       }
       r.lane = bestLane;
       r.ai.laneChangeCooldown = 0.7 + Math.random()*0.9;
