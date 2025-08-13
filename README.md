@@ -1,10 +1,12 @@
-#  Computer Racing — Tiny Browser Game
+# Computer Racing — Tiny Browser Game
 
 **Lane racer** where literal **computers** race to a finish line.  
-- **Up/Down**: change lane  
-- **Space**: boost (drains battery; recharges over time)  
-- **P**: pause  
+- **Up/Down**: change lane
+- **Space**: boost (drains battery; recharges over time)
+- **P**: pause
 - **R**: restart after finish
+
+Collect pickups that don't match your computer's color for a speed boost — matching colors slow you down.
 
 No libraries or build tools. Works on **GitHub Pages**.
 
@@ -22,6 +24,6 @@ Open `index.html` in a modern browser.
 ## Customize
 - Change racer colors & names in `src/game.js` where `racers` are created.
 - Adjust `FINISH` distance or number of lanes.
-- Add more features (boost/slow) by changing the sprinkling logic.
+- Add more color pickups by changing the sprinkling logic.
 
 MIT licensed — have fun!
