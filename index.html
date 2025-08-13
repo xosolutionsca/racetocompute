@@ -58,7 +58,7 @@
 
       function makeComputer(color,name,isPlayer=false,lane=2){return{
         name,isPlayer,x:0,y:laneY(lane),lane,w:70,h:48,baseSpeed:isPlayer?240:(200+Math.random()*80),
-        speed:0,color,battery:100,ai:{targetSpeed:220+Math.random()*120,laneChangeCooldown:0},
+        speed:0,color,battery:100,lastFeature:null,ai:{targetSpeed:220+Math.random()*120,laneChangeCooldown:0},
         finished:false,finishTime:Infinity};}
       const racers=[makeComputer("#a8d8ff","You",true,2),
                     makeComputer("#ffd8a8","AI-1",false,1),
@@ -88,8 +88,8 @@
         ctx.fillStyle="#cfcfcf";ctx.fillRect(x-10,y+r.h/2-2,20,10);ctx.fillRect(x-26,y+r.h/2+8,52,8);
         ctx.fillStyle="rgba(255,255,255,.85)";ctx.font="12px sans-serif";ctx.fillText(r.name,x-r.w/2,y-r.h/2-6);}
 
-      function collideFeatures(r){for(const f of features){if(f.lane!==r.lane)continue;
-        if(Math.abs(r.x-f.x)<30){if(f.type==="boost"){r.speed+=80;if(r.isPlayer)r.battery=Math.min(100,r.battery+10);}
+      function collideFeatures(r){if(r.lastFeature&&Math.abs(r.x-r.lastFeature.x)>=30)r.lastFeature=null;for(const f of features){if(f.lane!==r.lane)continue;
+        if(Math.abs(r.x-f.x)<30&&r.lastFeature!==f){r.lastFeature=f;if(f.type==="boost"){r.speed+=80;if(r.isPlayer)r.battery=Math.min(100,r.battery+10);}
           else{r.speed=Math.max(80,r.speed-120);}}}}
 
       function updatePlayer(r,dt){if(input.up&&r.lane>0){r.lane--;input.up=false;}
