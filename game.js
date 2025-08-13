@@ -66,6 +66,7 @@
       speed: 0,
       color,
       battery: 100,
+      lastFeature: null,
       ai: {
         targetSpeed: 220 + Math.random()*120,
         laneChangeCooldown: 0,
@@ -152,9 +153,11 @@
 
   // Collisions with features
   function collideFeatures(r, dt) {
+    if (r.lastFeature && Math.abs(r.x - r.lastFeature.x) >= 30) r.lastFeature = null;
     for (const f of features) {
       if (f.lane !== r.lane) continue;
-      if (Math.abs(r.x - f.x) < 30) {
+      if (Math.abs(r.x - f.x) < 30 && r.lastFeature !== f) {
+        r.lastFeature = f;
         if (f.type === "boost") {
           r.speed += 80;
           if (r.isPlayer) r.battery = Math.min(100, r.battery + 10);
