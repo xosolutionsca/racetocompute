@@ -1,0 +1,42 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: #0e0e13;
+  color: #f0f0f0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+}
+
+#ui {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+#title { font-weight: 800; letter-spacing: .4px; }
+#hud { display: flex; gap: 18px; font-weight: 600; }
+#help { font-size: 12px; opacity: .85; }
+
+#game {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+}
+
+#overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.55);
+  display: grid;
+  place-items: center;
+  font-size: 24px;
+  font-weight: 800;
+  z-index: 3;
+}
+
+.hide { display: none !important; }
